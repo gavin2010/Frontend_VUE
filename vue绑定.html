@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue绑定相关</title>
+<script src="vue_2.6.8.js"></script>
+<style> 
+	.class1{
+		background: #444;
+		color: #eee	;
+	}
+</style>
+</head>
+<body>
+<div id="vue_div">
+	<pre>
+
+1.v-bind与v-model的区别
+  1).v-bind是数据绑定，没有双向绑定效果，但不一定在表单元素上使用，任何有效元素上都可以使用；
+  2).v-model是双向绑定，基本上只用在表单元素上；
+  3).当v-bind和v-model同时用在一个元素上时，它们各自的作用没变，但v-model优先级更高，而且需区分这个元素是单个的还是一组出现的。
+--------------------------------------------------------------
+  </pre>
+  <label>site:{{ site }}</label> <br/>
+  <label>url:{{url}}</label> <br/>
+  <label>alexa:{{alexa}}</label><br/>
+  
+  
+  <br/><br/> vue支持表达式:&nbsp;&nbsp;&nbsp;
+  <label>2+5={{2+5}}</label> &nbsp&nbsp&nbsp
+  <label>三元运算{{'1'?'YES':'NO'}}</label>  &nbsp&nbsp&nbsp
+  <label>支持函数:{{site.split('').reverse().join('')}}</label> &nbsp&nbsp&nbsp
+  
+  
+  <br/><br/> v-html模板绑定:&nbsp;&nbsp;&nbsp;
+  <label v-html='htmlvalue'></label>
+  
+  
+  <br/><br/> v-bind绑定属性:&nbsp;&nbsp;&nbsp;
+  <label for="r1">绑定class</label><input type="checkbox" v-model="us" id="r1"/>
+  <label v-bind:class="{'class1':us}">v-bind指定</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <label v-bind:id="'list-'+id">v-bind绑定ID</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	<a v-bind:href="url">v-bind绑定href</a>
+  
+  
+  <br/><br/> v-if控制显示隐藏:
+  <label>显示文本</label><input type="checkbox" v-model='see'/>
+  <template	v-if="see">v-if的使用</template>
+  
+  
+  <br/><br/> v-model双向绑定:&nbsp;&nbsp;&nbsp;
+  <label>{{inputvalue}}</label><input v-model="inputvalue"></input>
+</div>
+
+<script type="text/javascript">
+var dataA = {
+	site: 'vue教程',
+	url: 'www.xxx.com',
+	alexa: 1000,
+	htmlvalue: '<a>绑定html模板值</a>',
+	us:false,
+	id:2,
+	see:false,
+	url:"www.baidu.com",
+	inputvalue:""
+}
+
+var vm = new Vue({
+		el:'#vue_div',
+		data:dataA,
+		methods:{
+		}
+})
+
+document.write('<br/>--------通过document方式写入的文本--------<br/>');
+document.write((dataA.sute === vm.site) + '<br/>');
+dataA.alexa = 1234;
+document.write(vm.alexa + '<br>');
+document.write(vm.$el === document.getElementById('vue_div'));
+</script>
+</body>
+</html>

@@ -8,13 +8,21 @@
 <body>
 <div id="app">
   <p>{{ message }}</p>
+  <p>site:{{site}}</p>
+  <p>{{desc()}}</p>
 </div>
 
 <script>
 new Vue({
   el: '#app',
   data: {
-    message: 'Hello Vue!'
+    message: 'Hello Vue!',
+    site: "四川成都"
+  },
+  methods:{
+  	desc:function(){
+  		return this.message + ' 练习笔记！';	
+  	}	
   }
 })
 </script>
