@@ -1,3 +1,6 @@
+当前进度：http://www.runoob.com/vue2/vue-loop.html
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -36,20 +39,46 @@
   <label v-html='htmlvalue'></label>
   
   
-  <br/><br/> v-bind绑定属性:&nbsp;&nbsp;&nbsp;
+  <br/><br/> v-bind:绑定属性(v-bind:class简写为:class):&nbsp;&nbsp;&nbsp;
   <label for="r1">绑定class</label><input type="checkbox" v-model="us" id="r1"/>
-  <label v-bind:class="{'class1':us}">v-bind指定</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <label v-bind:id="'list-'+id">v-bind绑定ID</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <label v-bind:class="{'class1':us}">v-bind指定</label>&nbsp;&nbsp;&nbsp;
+  <label v-bind:id="'list-'+id">v-bind绑定ID</label>&nbsp;&nbsp;&nbsp;
 	<a v-bind:href="url">v-bind绑定href</a>
   
   
-  <br/><br/> v-if控制显示隐藏:
+  <br/><br/> v-if控制显示隐藏:&nbsp;&nbsp;&nbsp;
   <label>显示文本</label><input type="checkbox" v-model='see'/>
-  <template	v-if="see">v-if的使用</template>
+  <label	v-if="see">v-if的使用</label>&nbsp;&nbsp;&nbsp;
+  <button @click="testIf">摇色子</button>
+  <label v-if="randNum < 0.5">小</label>
+  <label v-else>大</label>&nbsp;&nbsp;&nbsp;
+  <input v-model="fruit"/>
+  <label v-if="fruit=='A'">苹果</label>
+  <label v-else-if="fruit=='B'">西瓜</label>
+  <label v-else>其它水果</label>
   
   
+  <br/><br/> v-show也能控制显示隐藏:&nbsp;&nbsp;&nbsp;
+  <button @click="showFun">显示开关</button>
+  <label v-show="show">v-show</label>
+ 
+ 
+  <!-- 表单值改变引起data的值改变 -->
   <br/><br/> v-model双向绑定:&nbsp;&nbsp;&nbsp;
   <label>{{inputvalue}}</label><input v-model="inputvalue"></input>
+  	
+  	
+  <br/><br/> v-on绑定事件(v-on:click简写为@click):&nbsp;&nbsp;&nbsp
+  <button v-on:click="reverseStr">反转字符串</button>
+  <label>{{site}}</label>
+  
+  
+  <!-- 相当于linux的管道符，第一个作为参数传递给第二个函数-->
+  <br/><br/> filters过滤器:&nbsp;&nbsp;&nbsp; 	
+  <label>{{url|firstUpper}}</label>&nbsp;&nbsp;&nbsp; 	
+  <label>{{url|firstUpper|lastUpper}}</label>&nbsp;&nbsp;&nbsp; 	
+  <label>{{url|urlAppend('http',5+13)}}</label>&nbsp;&nbsp;&nbsp; 	
+  
 </div>
 
 <script type="text/javascript">
@@ -62,13 +91,40 @@ var dataA = {
 	id:2,
 	see:false,
 	url:"www.baidu.com",
-	inputvalue:""
+	inputvalue:"",
+	randNum:0,
+	fruit:'A',
+	show:false
 }
 
 var vm = new Vue({
 		el:'#vue_div',
 		data:dataA,
 		methods:{
+			reverseStr:function(){
+				 this.site = this.site.split('').reverse().join('');	
+			},
+			testIf:function(){
+				this.randNum = Math.random();
+			},
+			showFun:function(){
+				this.show = !this.show;
+			}
+		},
+		filters:{
+			firstUpper:function(value){
+				if(!value) return '';
+				value = value.toString();
+				return value.charAt(0).toUpperCase()+value.slice(1)	
+			},	
+			lastUpper: function(value){
+				if(!value) return '';	
+				value = value.toString();
+				return value.slice(0,value.length-1)+value.charAt(value.length-1).toUpperCase();
+			},
+			urlAppend: function(v1,v2,v3){
+				return v2+'://'+v1+'?a='+v3;
+			}
 		}
 })
 
