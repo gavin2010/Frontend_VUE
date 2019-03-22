@@ -1,4 +1,4 @@
-当前进度：http://www.runoob.com/vue2/vue-loop.html
+http://www.runoob.com/vue2/vue-class-style.html
 
 
 <!DOCTYPE html>
@@ -12,6 +12,10 @@
 		background: #444;
 		color: #eee	;
 	}
+	.myactive{
+		width:100px;
+		
+	}
 </style>
 </head>
 <body>
@@ -22,6 +26,8 @@
   1).v-bind是数据绑定，没有双向绑定效果，但不一定在表单元素上使用，任何有效元素上都可以使用；
   2).v-model是双向绑定，基本上只用在表单元素上；
   3).当v-bind和v-model同时用在一个元素上时，它们各自的作用没变，但v-model优先级更高，而且需区分这个元素是单个的还是一组出现的。
+2.{{showStrB()}}这种方式的绑定,任何点击事件都会触发该方法。
+  
 --------------------------------------------------------------
   </pre>
   <label>site:{{ site }}</label> <br/>
@@ -46,7 +52,7 @@
 	<a v-bind:href="url">v-bind绑定href</a>
   
   
-  <br/><br/> v-if控制显示隐藏:&nbsp;&nbsp;&nbsp;
+  <br/><br/> v-if控制显示隐藏(以及if-else的使用):&nbsp;&nbsp;&nbsp;
   <label>显示文本</label><input type="checkbox" v-model='see'/>
   <label	v-if="see">v-if的使用</label>&nbsp;&nbsp;&nbsp;
   <button @click="testIf">摇色子</button>
@@ -79,9 +85,47 @@
   <label>{{url|firstUpper|lastUpper}}</label>&nbsp;&nbsp;&nbsp; 	
   <label>{{url|urlAppend('http',5+13)}}</label>&nbsp;&nbsp;&nbsp; 	
   
+  
+  <br/><br/> v-for循环指令:&nbsp;&nbsp;&nbsp; 	
+  <label v-for="(add,index) in address">
+    {{index}}:{{add.name}}
+  </label>&nbsp;&nbsp;&nbsp; 
+  <label v-for="ke in fruit">
+   {{ke}}
+  </label>&nbsp;&nbsp;&nbsp; 
+   <label v-for="(va,ke,index) in fruit">
+  	 {{index}}:{{ke}}:{{va}}
+  </label>>&nbsp;&nbsp;&nbsp;
+   <label v-for="n in 10">
+  	 {{n}}
+  </label> 
+  
+  <br/><br/> computed计算指令(和methods效果一样[需要加括号]，computed是基于缓存的,methods不是):&nbsp;&nbsp;&nbsp; 
+ 	<label>原值:{{site}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>使用computed后:{{reverseSite}}</label>&nbsp;&nbsp;&nbsp;
+ 	<br/> computed的get和set方法&nbsp;&nbsp;&nbsp;
+ 	<label>{{computedString}}</label>
+ 	<br/> 验证computed是基于缓存的(可以交换下面代码的顺序)&nbsp;&nbsp;&nbsp;
+ 	<label>1methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>2methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>3methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>1computed:{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>2computed:{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+ 	<label>3computed{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+ 
+ 	
+	<br/><br/>$watch监听:&nbsp;&nbsp;&nbsp;
+	<button @click="mycount++" >点击</button>
+	<label>{{mycount}}</label>
+	<br/>watch监听:&nbsp;&nbsp;&nbsp;
+	<label>单位换算(wath指令)</label>
+	千米:<input v-model="kilometer"/>&nbsp;&nbsp;
+	米:<input v-model="meter"/>
+
 </div>
 
 <script type="text/javascript">
+var cn=0
 var dataA = {
 	site: 'vue教程',
 	url: 'www.xxx.com',
@@ -94,7 +138,21 @@ var dataA = {
 	inputvalue:"",
 	randNum:0,
 	fruit:'A',
-	show:false
+	show:false,
+	address:[
+		{name:'成都'},
+		{name:'深圳'},
+		{name:'北京'}
+	],
+	fruit:{
+		"A":"苹果",
+		"B":"梨子",
+		"C":"西瓜"
+	},
+	computedStr:"ABCD",
+	mycount:0,
+	kilometer:0,
+	meter:0
 }
 
 var vm = new Vue({
@@ -108,7 +166,11 @@ var vm = new Vue({
 				this.randNum = Math.random();
 			},
 			showFun:function(){
+				console.log(1)
 				this.show = !this.show;
+			},
+			showStrB:function(){
+				return cn++;
 			}
 		},
 		filters:{
@@ -125,7 +187,41 @@ var vm = new Vue({
 			urlAppend: function(v1,v2,v3){
 				return v2+'://'+v1+'?a='+v3;
 			}
+		},
+		computed:{
+			reverseSite:function(){
+				 return this.site.split('').reverse().join('');
+			},
+			showStrA:function(){
+					return cn++;
+			},
+			computedString:{
+				get:function(){
+						return this.computedStr;
+				},
+				set:function(newValue){
+					this.computedStr = newValue;
+				}
+				
+			}
+		},
+		watch:{
+			kilometer:function(value){
+				this.meter = value*1000;
+			},
+			meter:function(value){
+				this.kilometer = value/1000;
+			}
 		}
+})
+
+<!-- watch监听-->
+vm.$watch('mycount',function(newValue,oldValue){
+	alert('计数器的值'+oldValue+'变成了'+newValue);	
+})
+<!-- 仅仅监听kilometer -->
+vm.$watch('kilometer',function(newV,oldV){
+		alert("新值："+newV+", 旧值:"+oldV);
 })
 
 document.write('<br/>--------通过document方式写入的文本--------<br/>');
@@ -133,6 +229,10 @@ document.write((dataA.sute === vm.site) + '<br/>');
 dataA.alexa = 1234;
 document.write(vm.alexa + '<br>');
 document.write(vm.$el === document.getElementById('vue_div'));
+
+//调用computed的set方法
+vm.computedString = "AAAAAAA";
+
 </script>
 </body>
 </html>
