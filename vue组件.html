@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue组件</title>
+<script src="vue.js"></script>
+<style> 
+
+</style>
+</head>
+<body>
+<pre>
+1.一个文件只能定义一个组件，会冲突？全局和局部组件有加载顺序
+2.prop 是单向绑定的：当父组件的属性变化时，将传导给子组件，但是不会反过来  
+3.props中的值和自定义组件的值必须全部是小写，最后用<></>表示，不用一个</>代替自定义组件
+--------------------------------------------------------------
+</pre>
+  
+<div id="myapp">
+	
+	 <p2 style="font-weight:bold">1.自定义组件</p2><br/>
+	
+	 <!--只能父组件向子层传递
+	 	 <br/>全局自定义组件： <mycomp/>
+	   <br/>局部自定义组件： <myincomp></myincomp> 
+	   <br/>父组件向子组件通过prop传递消息： <propcomp msg="hello"/>
+	   <br/>父组件双向绑定：<input v-model="msgStr" placeholder="请输入……"/><propcomp :msg="msgStr"/>
+	   <br/>父组件循环绑定(遍历对象只能绑定最后一个): <label><propcomp v-for="site in sites" :msg="site"/></label>
+		 <br/>父组件循环绑定(遍历数组可以绑定多个)：<forcomp v-for="siteA in sitesA"  :msg="siteA"></forcomp>
+ 		 <br/>父组件传值类型校验: <examplea :propA="10" propB="'20'" :propC="'30'" propD='40' prope='50' :propf='propx' />
+    -->
+
+     <!--$emit是向外部组件传值 -->
+
+
+     <br/><br/>$emit调用外网方法,向外部传值：<btncount @outaaa="outclick"></btncount><btncount @outaaa="outclick"></btncount> <label>总共点击了{{outcount}}</label>
+     <br/>native监听根元素的原生事件(自定义组件的click方法，不加上native,自定义组件点击没有反应)：<nativecom v-on:click.native="donative"></nativecom>
+ 	
+</div>
+
+
+<script>
+var mychild = {
+	template: '<label>第一个局部自定义组件</label>'
+}
+//注册组件,全局自定义组件
+Vue.component('mycomp',{
+	template:'<label>第一个全局自定义组件</label>'
+})
+
+Vue.component('propcomp',{
+	//声明props
+	props:['msg'],
+	template:'<label>{{msg}}</label>'
+})
+
+Vue.component('forcomp',{
+	//声明props
+	props:['msg'],
+	template:'<label>{{msg.text}}</label>'
+})
+
+Vue.component('examplea', {
+  props: {
+    // 基础类型检测 （`null` 意思是任何类型都可以）
+    propa: Number,
+    // 多种类型
+    propb: [String, Number],
+    // 必传且是字符串
+    propc: {
+      type: String,
+      required: true
+    },
+    // 数字，有默认值
+    propd: {
+      type: Number,
+      default: 100
+    },
+    // 数组／对象的默认值应当由一个工厂函数返回
+    prope: {
+      type: Object,
+      default: function () {
+        return { message: 'hello' }
+      }
+    },
+    // 自定义验证函数
+    propf: {
+      validator: function (value) {
+        return value > 10
+      }
+    }
+  },
+  template:'<label>propa:{{propa}}&nbsp;&nbsp;    propb:{{propb}}&nbsp;&nbsp;    propc:{{propc}}&nbsp;&nbsp   propd:{{propd}}&nbsp;&nbsp;    prope:{{prope}}&nbsp;&nbsp;    propf:{{propf}}&nbsp;&nbsp;    </label>'
+})
+
+
+var glocount={incount:0};
+Vue.component('btncount',{
+	template:'<button v-on:click="inclick">{{incount}}</button>',
+	//data数据用函数包,
+	data:function(){
+		 //使用对象保持各个组件独立。否则用全局变量就不独立了
+			return{incount:0}
+		//return glocount;
+	},
+	methods:{
+		inclick:function(){
+			this.incount +=1;
+			//调用外部方法
+			this.$emit("outaaa");
+		}
+	}
+})
+
+Vue.component('nativecom',{
+	template:'<label>验证v-on:click.native</label>'
+})
+
+var vm = new Vue({
+	el: "#myapp",
+	components:{
+		'myincomp':mychild
+	},
+	data:{
+		msgStr:'父组件双向绑定',
+		sites:{
+			text:'成都',
+			text:'深圳',
+			text:'重庆'
+		},
+		sitesA:[
+			{text:'成都'},
+			{text:'深圳'},
+			{text:'重庆'}
+		],
+		propx:60,
+		outcount:0
+	},
+	methods:{
+		outclick:function(){
+			this.outcount += 1;
+		},
+		donative:function(){
+			alert(this.propx);
+		}
+	}
+})
+</script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Vue基础指令</title>
+<script src="vue.js"></script>
+<style> 
+	.class1{
+		background: #444;
+		color: #eee	;
+	}
+	.myactive{
+		width:100px;
+		
+	}
+	.text-danger {
+		background: red;
+	}
+</style>
+</head>
+<body>
+<div id="vue_div">
+	<pre>
+
+1.v-bind与v-model的区别
+  1).v-bind是数据绑定，没有双向绑定效果，但不一定在表单元素上使用，任何有效元素上都可以使用；
+  2).v-model是双向绑定，基本上只用在表单元素上；
+  3).当v-bind和v-model同时用在一个元素上时，它们各自的作用没变，但v-model优先级更高，而且需区分这个元素是单个的还是一组出现的。
+2.{{showStrB()}}这种方式的绑定,任何点击事件都会触发该方法。
+3.v-bind绑定class时，若class含有-等特殊字符，需要用单引号包裹。如 v-bind:class="{'text-danger':haserror}"，建议变量不要有特殊字符。
+--------------------------------------------------------------
+  </pre>
+  
+  <p2 style="font-weight:bold">1.vue基础绑定语法</p2><br/><br/>
+
+  <label>site:{{ site }}</label> <br/>
+  <label>url:{{url}}</label> <br/>
+  <label>alexa:{{alexa}}</label>
+  <br/> vue支持表达式:&nbsp;&nbsp;&nbsp;
+  			<label>2+5={{2+5}}</label> &nbsp&nbsp&nbsp
+ 			  <label>三元运算{{'1'?'YES':'NO'}}</label>  &nbsp&nbsp&nbsp
+  			<label>支持函数:{{site.split('').reverse().join('')}}</label> &nbsp&nbsp&nbsp
+  <br/> v-html模板绑定:&nbsp;&nbsp;&nbsp;
+  			<label v-html='htmlvalue'></label>
+  
+  
+  <br/><br/>
+  <br/><br/><p2 style="font-weight:bold">2. v-bind使用</p2>
+  <br/><br/> v-bind:绑定属性(v-bind:class简写为:class):&nbsp;&nbsp;&nbsp;
+  			<label for="r1">绑定class</label><input type="checkbox" v-model="us" id="r1"/>
+  			<label v-bind:class="{'class1':us}">v-bind指定</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:id="'list-'+id">v-bind绑定ID</label>&nbsp;&nbsp;&nbsp;
+	<br/><a v-bind:href="url">v-bind绑定href</a>&nbsp;&nbsp;&nbsp;
+	<br/><label v-bind:class="{'class1':isactive,'text-danger':haserror}">v-bind绑定2个class(class要加单引号)</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:class="classObject">v-bind绑定Data对象</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:class="computedObject">v-bind绑定computed对象</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:class="[class1Str,'text-danger']">v-bind绑定数组对象</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:class="[class1Str,isactive?'text-danger':'']">v-bind绑定三元表达式,class1Str样式始终存在</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:style="{'color':innerColor,'font-size':innerFontSize+'px'}">v-bind style内联样式直接设置</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:style="styleObject">v-bind style绑定对象</label>&nbsp;&nbsp;&nbsp;
+  <br/><label v-bind:style="[styleObject,sttyleObject1]">v-bind style绑定对象数组</label>&nbsp;&nbsp;&nbsp;
+  <br/>通过按钮调节字体大小<button v-on:click="setFont--">-</button> <button @click="setFont++">+</button> <label v-bind:style="{fontSize:setFont}">字体</label>&nbsp;&nbsp;&nbsp;
+ 
+ 
+ 
+  <br/><br/>
+  <br/><br/><p2 style="font-weight:bold">3. v-on与监听使用</p2>
+  <br/><br/> v-on绑定事件(v-on:click简写为@click):&nbsp;&nbsp;&nbsp
+  			<button v-on:click="reverseStr">反转字符串</button>
+  			<label>{{site}}</label>:&nbsp;&nbsp;&nbsp
+  <br/>普通点击事件: <button @click="greet">Greet</button>  
+  <br/>传值：<button v-on:click="say('gavin')">fun传值</button>
+  <br/><label @click="pop2"><label @click="pop1">原生阻止冒泡(点我)</label></label>&nbsp;&nbsp;&nbsp
+  <br/><label @click="popvue2"><label @click.stop="popvue1">VUE阻止冒泡(点我)</label></label>
+  <br/>按enter(只能监听表单)<input placeholder='请输入……' @keydown.enter="enterfun" />
+ 
+ 
+	<br/><br/>$watch监听:&nbsp;&nbsp;&nbsp;
+				<button @click="mycount++" >点击</button>
+				<label>{{mycount}}</label>
+	<br/>watch监听:&nbsp;&nbsp;&nbsp;
+				<label>单位换算(wath指令)</label>
+				千米:<input v-model="kilometer"/>&nbsp;&nbsp;
+				米:<input v-model="meter"/>
+ 
+ 
+  <br/><br/>
+  <br/><br/><p2 style="font-weight:bold">4 v-model使用</p2>
+  <!-- 表单值改变引起data的值改变 -->
+  <br/><br/> v-model双向绑定(作用于表单):&nbsp;&nbsp;&nbsp;
+	<br/>文本框：<input v-model="inputvalue" placeholder="请输入……"></input><label>{{inputvalue}}</label>,
+						返回的是数字:{{inputvalue===parseInt(num_text)}}
+	<br/>文本框(lazy)change时才触发: <input v-model.lazy="lazy_text" placeholder="延迟文本框……">{{lazy_text}}
+	<br/>文本框(trim)截取两头空格: <input v-model.trim="trim_text" placeholder="trim文本框……"> 长度:{{trim_text.length}}
+	<br/>返回数字文本(返回数字类型)<input v-model.number="num_text" placeholder="数字文本框……"/>{{num_text === parseInt(num_text)}}
+  <br/>单选框(必须有value)：
+     					 <input type='radio' value='男' v-model="redioValue" id='man'/> <label for='man'>男</label> 
+  						 <input type='radio' value='女' v-model="redioValue" id='female'/><label for='female'>女</label> 
+  						 你选中的值：{{redioValue}}	
+  <br/>单个复选框(绑定一个值就是true || false)：<input type="checkbox" v-model="chec" value='复选框' >{{chec}}
+  <br/>多个复选框(多个复选框绑定一个值就是数组)：
+  						<label for="checkApple">苹果</label><input type="checkbox"  v-model="checkFruits" id="checkApple" value="apple"/>&nbsp;&nbsp;&nbsp;
+ 							<label for="checkOrange">橘子</label><input type="checkbox" id="checkOrange" v-model="checkFruits" value="orange"/>&nbsp;&nbsp;&nbsp;
+  						<label for="checkBanana">香蕉</label><input type="checkbox" id="checkBanana"  v-model="checkFruits" value="banana"/>&nbsp;&nbsp;&nbsp;
+  						你的选择是：{{checkFruits}}	
+  <br/>下拉列表：
+  						<select v-model="selctValue">
+  							<option value='成都'>成都</option>
+  							<option value='深圳'>深圳</option>
+  							<option value='重庆'>重庆</option>
+  						</select>
+  						你的选择是:{{selctValue}}
+  
+
+ 
+  
+  <br/><br/>
+  <br/><br/><p2 style="font-weight:bold">5. v-if、v-show、v-for、管道符等使用</p2>
+  <!-- 相当于linux的管道符，第一个作为参数传递给第二个函数-->
+  <br/><br/> filters过滤器:&nbsp;&nbsp;&nbsp; 	<label>{{url|firstUpper}}</label>&nbsp;&nbsp;&nbsp; 	
+  <br/> filters双过滤器: <label>{{url|firstUpper|lastUpper}}</label>&nbsp;&nbsp;&nbsp; 	
+  <br/> filters函数过滤器: <label>{{url|urlAppend('http',5+13)}}</label>&nbsp;&nbsp;&nbsp; 	
+  
+  <br/><br/> v-if控制显示隐藏(以及if-else的使用):&nbsp;&nbsp;&nbsp;
+ 			  <label>显示文本</label><input type="checkbox" v-model='see'/>
+        <label	v-if="see">v-if的使用</label>&nbsp;&nbsp;&nbsp;
+  <br/>v-if v-else的使用: <button @click="testIf">摇色子</button>
+  			<label v-if="randNum < 0.5">小</label>
+  			<label v-else>大</label>&nbsp;&nbsp;&nbsp;
+  <br/> v-if v-else-if v-else的使用:<input v-model="myfruit" placeholder='请输入A,B,C……' />
+  			<label v-if="myfruit=='A'">苹果</label>
+  			<label v-else-if="myfruit=='B'">西瓜</label>
+  			<label v-else>其它水果</label>
+  
+  
+  <br/><br/> v-show也能控制显示隐藏:&nbsp;&nbsp;&nbsp;
+  			<button @click="showFun">显示开关</button>
+  			<label v-show="show">v-show</label>
+  
+  
+  <br/><br/>v-for循环值:&nbsp;&nbsp;&nbsp; 
+   			 <label v-for="ke in fruit">
+			   	{{ke}}
+			  </label>&nbsp;&nbsp;&nbsp; 
+  <br/>v-for循环(键、值):&nbsp;&nbsp;&nbsp; 	
+			  <label v-for="(add,index) in address">
+			    {{index}} : {{add.name}}&nbsp;&nbsp;&nbsp; 
+			  </label>&nbsp;&nbsp;&nbsp; 
+  <br/>v-for循环(键、值、索引):&nbsp;&nbsp;&nbsp; 			
+  			<label v-for="(va,ke,index) in fruit">
+  				 {{index}} : {{ke}} : {{va}}&nbsp;&nbsp;&nbsp; 				
+  			</label>&nbsp;&nbsp;&nbsp;
+  <br/>v-for循环数字:&nbsp;&nbsp;&nbsp;
+		   <label v-for="n in 10">
+		  	 {{n}}
+		   </label> 
+  
+  
+  
+  
+  <br/><br/>
+  <br/><br/><p2 style="font-weight:bold">6.computed使用</p2>
+  <br/><br/> computed计算指令(和methods效果一样[需要加括号]，computed是基于缓存的,methods不是):&nbsp;&nbsp;&nbsp; 
+ 				<label>原值:{{site}}</label>&nbsp;&nbsp;&nbsp;
+ 				<label>使用computed后:{{reverseSite}}</label>&nbsp;&nbsp;&nbsp;
+ 	<br/> computed的get和set方法: &nbsp;&nbsp;&nbsp;
+ 				<label>{{computedString}}</label>
+ 	<br/> 验证computed是基于缓存的(可以交换下面代码的顺序): &nbsp;&nbsp;&nbsp;
+			 	<label>1methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+			 	<label>2methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+			 	<label>3methods:{{showStrB()}}</label>&nbsp;&nbsp;&nbsp;
+			 	<label>1computed:{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+			 	<label>2computed:{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+			 	<label>3computed{{showStrA}}</label>&nbsp;&nbsp;&nbsp;
+ 
+
+</div>
+
+<script type="text/javascript">
+var cn=0
+var dataA = {
+	site: 'vue教程',
+	url: 'www.xxx.com',
+	alexa: 1000,
+	htmlvalue: '<a>绑定html模板值</a>',
+	us:false,
+	id:2,
+	see:false,
+	url:"www.baidu.com",
+	inputvalue:"",
+	randNum:0,
+	myfruit:'',
+	show:false,
+	address:[
+		{name:'成都'},
+		{name:'深圳'},
+		{name:'北京'}
+	],
+	fruit:{
+		"A":"苹果",
+		"B":"梨子",
+		"C":"西瓜"
+	},
+	computedStr:"ABCD",
+	mycount:0,
+	kilometer:0,
+	meter:0,
+	isactive:true,
+	haserror:true,
+	classObject:{
+		class1:true,
+		//有-特殊字符的要用单引号包裹
+		'text-danger':true
+	},
+	'text-dangerStr':'text-danger',
+	 class1Str:'class1',
+	 innerColor:'green',
+	 innerFontSize:18,
+	 styleObject:{
+	 	color:'green',
+	 	fontSize:'17px'
+	 },
+	 sttyleObject1:{
+	 	  'font-weight': 'bold'
+	 },
+	 setFont:14,
+	 redioValue:'',
+	 chec:false,
+	 checkFruits:[],
+	 selctValue:'',
+	 lazy_text:'',
+	 num_text:'',
+	 trim_text:''
+}
+
+var vm = new Vue({
+		el:'#vue_div',
+		data:dataA,
+		methods:{
+			reverseStr:function(){
+				 this.site = this.site.split('').reverse().join('');	
+			},
+			testIf:function(){
+				this.randNum = Math.random();
+			},
+			showFun:function(){
+				console.log(1)
+				this.show = !this.show;
+			},
+			showStrB:function(){
+				return cn++;
+			},
+			greet:function(event){
+				if(event){
+					alert('hello '+event.target.tagName+' !')
+				}
+			},
+			say:function(msg){
+				alert('Hello,'+msg+'!');
+			},
+			pop1:function(event){
+				event.cancelBubble=true;
+				alert(1);
+			},
+			pop2:function(event){
+				alert(2);
+			},
+			popvue1:function(event){
+				alert(1);
+			},
+			popvue2:function(event){
+				alert(2);
+			},
+			enterfun:function(){
+				alert('你点击了enter键');	
+			}
+		},
+		filters:{
+			firstUpper:function(value){
+				if(!value) return '';
+				value = value.toString();
+				return value.charAt(0).toUpperCase()+value.slice(1)	
+			},	
+			lastUpper: function(value){
+				if(!value) return '';	
+				value = value.toString();
+				return value.slice(0,value.length-1)+value.charAt(value.length-1).toUpperCase();
+			},
+			urlAppend: function(v1,v2,v3){
+				return v2+'://'+v1+'?a='+v3;
+			}
+		},
+		computed:{
+			reverseSite:function(){
+				 return this.site.split('').reverse().join('');
+			},
+			showStrA:function(){
+					return cn++;
+			},
+			computedString:{
+				get:function(){
+						return this.computedStr;
+				},
+				set:function(newValue){
+					this.computedStr = newValue;
+				}
+				
+			},
+			computedObject:{
+				get:function(){
+					return{
+							class1:true,
+							//有-特殊字符的要用单引号包裹
+							'text-danger':true
+					}
+				}
+			}
+		},
+		watch:{
+			kilometer:function(value){
+				this.meter = value*1000;
+			},
+			meter:function(value){
+				this.kilometer = value/1000;
+			}
+		}
+})
+
+<!-- watch监听-->
+vm.$watch('mycount',function(newValue,oldValue){
+	alert('计数器的值'+oldValue+'变成了'+newValue);	
+})
+<!-- 仅仅监听kilometer -->
+vm.$watch('kilometer',function(newV,oldV){
+		alert("新值："+newV+", 旧值:"+oldV);
+})
+
+document.write('<br/>--------通过document方式写入的文本--------<br/>');
+document.write((dataA.sute === vm.site) + '<br/>');
+dataA.alexa = 1234;
+document.write(vm.alexa + '<br>');
+document.write(vm.$el === document.getElementById('vue_div'));
+
+//调用computed的set方法
+vm.computedString = "AAAAAAA";
+
+</script>
+</body>
+</html>
