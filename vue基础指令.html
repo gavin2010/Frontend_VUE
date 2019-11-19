@@ -28,6 +28,28 @@
   3).当v-bind和v-model同时用在一个元素上时，它们各自的作用没变，但v-model优先级更高，而且需区分这个元素是单个的还是一组出现的。
 2.{{showStrB()}}这种方式的绑定,任何点击事件都会触发该方法。
 3.v-bind绑定class时，若class含有-等特殊字符，需要用单引号包裹。如 v-bind:class="{'text-danger':haserror}"，建议变量不要有特殊字符。
+4.v-if和v-show的区别
+	1、实现方式
+	v-if是根据后面数据的真假值判断直接从Dom树上删除或重建元素节点
+	v-show只是在修改元素的css样式，也就是display的属性值，元素始终在Dom树上。
+
+	2、编译过程
+	v-if切换有一个局部编译/卸载的过程，切换过程中合适地销毁和重建内部的事件监听和子组件； 
+	v-show只是简单的基于css切换；
+
+	3、编译条件
+	v-if是惰性的，如果初始条件为假，则什么也不做；只有在条件第一次变为真时才开始局部编译；
+	v-show是在任何条件下（首次条件是否为真）都被编译，然后被缓存，而且DOM元素始终被保留； 
+
+	4、性能消耗
+	v-if有更高的切换消耗，不适合做频繁的切换；
+	v-show有更高的初始渲染消耗，适合做频繁的额切换；
+	
+5.methods、computed、filter
+    computed处理复杂逻辑，基于依赖缓存，当依赖发生改变时会重新取值。
+	methods也可以实现同样的效果，但methods在重新渲染的时候会重新调用执行，在性能上computed优于methods,当不需要缓存时可用methods。
+	filter过滤器是将返回数据进行处理后返回处理结果的简单函数(即是配合管道符过滤器使用)。可是在vue2.0版本被去掉了，替代方法是将函数写在methods里
+
 --------------------------------------------------------------
   </pre>
   
@@ -59,7 +81,7 @@
   <br/><label v-bind:style="{'color':innerColor,'font-size':innerFontSize+'px'}">v-bind style内联样式直接设置</label>&nbsp;&nbsp;&nbsp;
   <br/><label v-bind:style="styleObject">v-bind style绑定对象</label>&nbsp;&nbsp;&nbsp;
   <br/><label v-bind:style="[styleObject,sttyleObject1]">v-bind style绑定对象数组</label>&nbsp;&nbsp;&nbsp;
-  <br/>通过按钮调节字体大小<button v-on:click="setFont--">-</button> <button @click="setFont++">+</button> <label v-bind:style="{fontSize:setFont}">字体</label>&nbsp;&nbsp;&nbsp;
+  <br/>通过按钮调节字体大小<button v-on:click="setFont--">-</button> <button @click="setFont++">+</button> <label v-bind:style="{fontSize:setFont+'px'}">字体</label>&nbsp;&nbsp;&nbsp;
  
  
  
@@ -72,7 +94,7 @@
   <br/>传值：<button v-on:click="say('gavin')">fun传值</button>
   <br/><label @click="pop2"><label @click="pop1">原生阻止冒泡(点我)</label></label>&nbsp;&nbsp;&nbsp
   <br/><label @click="popvue2"><label @click.stop="popvue1">VUE阻止冒泡(点我)</label></label>
-  <br/>按enter(只能监听表单)<input placeholder='请输入……' @keydown.enter="enterfun" />
+  <br/>按enter(只能监听表单)<input placeholder='请输入……' v-model:value="myinputvalue" @keydown.enter="enterfun" />
  
  
 	<br/><br/>$watch监听:&nbsp;&nbsp;&nbsp;
@@ -191,6 +213,7 @@ var dataA = {
 	randNum:0,
 	myfruit:'',
 	show:false,
+	myinputvalue:'',
 	address:[
 		{name:'成都'},
 		{name:'深圳'},
@@ -235,7 +258,7 @@ var dataA = {
 
 var vm = new Vue({
 		el:'#vue_div',
-		data:dataA,
+	    data:dataA,
 		methods:{
 			reverseStr:function(){
 				 this.site = this.site.split('').reverse().join('');	
@@ -272,7 +295,7 @@ var vm = new Vue({
 				alert(2);
 			},
 			enterfun:function(){
-				alert('你点击了enter键');	
+				alert('你点击了enter键'+this.myinputvalue);	
 			}
 		},
 		filters:{
